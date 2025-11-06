@@ -1,12 +1,13 @@
 const http = require("http");
+require("dotenv").config();
+
 const mongoose = require("mongoose");
 
 const PORT = process.env.PORT || 8000;
-
-const MONGO_URL =
-  "mongodb+srv://annakhloyan_db_user:OW4LAxYfwawTz01s@nasa.8nxmrkl.mongodb.net/nasa?retryWrites=true&w=majority";
+const MONGO_URL = process.env.MONGO_URL;
 
 const { loadPlanetsData } = require("./models/planets.model");
+const { loadLaunchData } = require("./models/launches.model");
 
 const app = require("./app");
 
@@ -24,6 +25,8 @@ async function startServer() {
   await mongoose.connect(MONGO_URL);
 
   await loadPlanetsData();
+  await loadLaunchData();
+
   server
     .listen(PORT, () => {
       console.log(`Server is running on port ${PORT}`);
