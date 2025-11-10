@@ -6,6 +6,12 @@ const mongoose = require("mongoose");
 const PORT = process.env.PORT || 8000;
 const MONGO_URL = process.env.MONGO_URL;
 
+if (!MONGO_URL) {
+  throw new Error(
+    "MONGO_URL is not defined in environment variables. Please set it in your .env file."
+  );
+}
+
 const { loadPlanetsData } = require("./models/planets.model");
 const { loadLaunchData } = require("./models/launches.model");
 
@@ -22,6 +28,15 @@ mongoose.connection.on("error", (err) => {
 });
 
 async function startServer() {
+  if (
+    !MONGO_URL.startsWith("mongodb://") &&
+    !MONGO_URL.startsWith("mongodb+srv://")
+  ) {
+    throw new Error(
+      `Invalid MONGO_URL format. Expected connection string to start with "mongodb://" or "mongodb+srv://"`
+    );
+  }
+
   await mongoose.connect(MONGO_URL);
 
   await loadPlanetsData();
